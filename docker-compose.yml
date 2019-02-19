@@ -9,15 +9,18 @@ services:
         ELK_VERSION: $ELK_VERSION
     volumes:
       - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+      - /opt/elasticsearch:/usr/share/elasticsearch/data
+    container_name: elasticsearch
     ports:
       - "9200:9200"
       - "9300:9300"
     environment:
-      ES_JAVA_OPTS: "-Xmx256m -Xms256m"
+      ES_JAVA_OPTS: "-Xmx1g -Xms1g"
     networks:
       - elk
 
   logstash:
+    container_name: logstash 
     build:
       context: logstash/
       args:
@@ -29,13 +32,14 @@ services:
       - "5000:5000"
       - "9600:9600"
     environment:
-      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+      LS_JAVA_OPTS: "-Xmx512m -Xms512m"
     networks:
       - elk
     depends_on:
       - elasticsearch
 
   kibana:
+    container_name: kibana 
     build:
       context: kibana/
       args:
